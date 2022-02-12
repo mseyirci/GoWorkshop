@@ -17,7 +17,7 @@ func main() {
 	fmt.Println(quote.Glass())
 
 	// A slice of names.
-	names := []string{"Gladys", "Samantha", "Darrin"}
+	names := []string{"Gladyss", "Samantha", "Darrin"}
 
 	// Request greeting messages for the names.
 	messages, err := greetings.Hellos(names)
