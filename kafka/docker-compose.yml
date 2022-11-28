@@ -8,9 +8,9 @@ services:
     volumes:
       - "kafka_data:/hepsikafka"
     environment:
-      - KAFKA_ENABLE_KRAFT=yes
-      - KAFKA_CFG_PROCESS_ROLES=broker,controller
-      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_ENABLE_KRAFT=yes #Whether to enable Kafka Raft (KRaft) mode. Without zookeper
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller #kafka config controller.listener.names
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER #kafka config listener.names.controller
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
       - KAFKA_CFG_LISTENERS=CONTROLLER://:9094,CLIENT://:9093,EXTERNAL://:9092
       - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9093,EXTERNAL://127.0.0.1:9092

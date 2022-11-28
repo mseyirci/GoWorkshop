@@ -1,0 +1,8 @@
+docker-compose up -d
+
+docker exec -it <ContainerName> /bin/sh
+bin/kafka-topics.sh --create --topic quickstart-events --bootstrap-server localhost:9092 #create topic
+kafka-topics.sh #docker topics altındaki commands
+kafka-topics.sh --describe --topic topic_deneme2 --bootstrap-server localhost:9092 #get info topics
+kafka-console-producer.sh --topic topic_deneme2 --bootstrap-server localhost:9092 #write evets into topic
+kafka-console-consumer.sh --topic topic_deneme2 --from-beginning --bootstrap-server localhost:9092 #read events
