@@ -18,14 +18,15 @@ services:
       - KAFKA_CFG_BROKER_ID=1
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@127.0.0.1:9094 #birden fazla controller broker olabilir bu property ile onları gosteririz Eger  controller ozerlligine sahip 2 id'li bir broker daha olsaydı 2@x.x.x.x:9094 gibi tanımlardık
       - ALLOW_PLAINTEXT_LISTENER=yes
-  kafdrop:
-    image: obsidiandynamics/kafdrop:latest
-    depends_on:
-      - kafka
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
     ports:
-      - 9000:9000
+      - "8080:8080"
+    restart: always
     environment:
-      KAFKA_BROKERCONNECT: kafka:9093
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9093
 volumes:
   kafka_data:
     driver: local
