@@ -1,0 +1,105 @@
+version: "3.3"
+
+services:
+
+  kafka0:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka0
+    container_name: kafka0
+    ports:
+      - "39094:39094"
+    environment:
+      KAFKA_LISTENERS: BROKER://kafka0:9092,EXTERNAL://kafka0:39094,CONTROLLER://kafka0:9093
+      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka0:9092,EXTERNAL://kafka0:39094
+      KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,BROKER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_PROCESS_ROLES: 'controller,broker'
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka0:9093,2@kafka1:9093'
+      KAFKA_METADATA_LOG_SEGMENT_MS: 15000
+      KAFKA_METADATA_MAX_RETENTION_MS: 1200000
+      KAFKA_METADATA_LOG_MAX_RECORD_BYTES_BETWEEN_SNAPSHOTS: 2800
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+    volumes:
+      - ./command-input-files/reassign-topic-1-a.json:/tmp/reassign-topic-1-a.json
+      - ./command-input-files/reassign-topic-1-b.json:/tmp/reassign-topic-1-b.json
+      - ./command-input-files/reassign-topic-2-a.json:/tmp/reassign-topic-2-a.json
+      - ./command-input-files/reassign-topic-2-b.json:/tmp/reassign-topic-2-b.json
+      - ./scripts/update_run.sh:/tmp/update_run.sh
+      - ./clusterID2:/tmp/clusterID
+    command: "bash -c '/tmp/update_run.sh && /etc/confluent/docker/run'"
+
+  kafka1:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka1
+    container_name: kafka1
+    ports:
+      - "39095:39095"
+    environment:
+      KAFKA_LISTENERS: BROKER://kafka1:9092,EXTERNAL://kafka1:39095,CONTROLLER://kafka1:9093
+      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka1:9092,EXTERNAL://kafka1:39095
+      KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,BROKER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_PROCESS_ROLES: 'controller,broker'
+      KAFKA_NODE_ID: 2
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka0:9093,2@kafka1:9093'
+      KAFKA_METADATA_LOG_SEGMENT_MS: 15000
+      KAFKA_METADATA_MAX_RETENTION_MS: 1200000
+      KAFKA_METADATA_LOG_MAX_RECORD_BYTES_BETWEEN_SNAPSHOTS: 2800
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+    volumes:
+      - ./command-input-files/reassign-topic-1-a.json:/tmp/reassign-topic-1-a.json
+      - ./command-input-files/reassign-topic-1-b.json:/tmp/reassign-topic-1-b.json
+      - ./command-input-files/reassign-topic-2-a.json:/tmp/reassign-topic-2-a.json
+      - ./command-input-files/reassign-topic-2-b.json:/tmp/reassign-topic-2-b.json
+      - ./scripts/update_run.sh:/tmp/update_run.sh
+      - ./clusterID2:/tmp/clusterID
+    command: "bash -c '/tmp/update_run.sh && /etc/confluent/docker/run'"
+
+  kafka2:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka2
+    container_name: kafka2
+    depends_on:
+      - kafka0
+      - kafka1
+    ports:
+      - "19092:19092"
+    environment:
+      KAFKA_LISTENERS: BROKER://kafka2:9092,EXTERNAL://kafka2:19092
+      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka2:9092,EXTERNAL://kafka2:19092
+      KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,BROKER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_PROCESS_ROLES: 'broker'
+      KAFKA_NODE_ID: 4
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka0:9093,2@kafka1:9093'
+      KAFKA_METADATA_LOG_SEGMENT_MS: 15000
+      KAFKA_METADATA_MAX_RETENTION_MS: 1200000
+      KAFKA_METADATA_LOG_MAX_RECORD_BYTES_BETWEEN_SNAPSHOTS: 2800
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+    volumes:
+      - ./command-input-files/reassign-topic-1-a.json:/tmp/reassign-topic-1-a.json
+      - ./command-input-files/reassign-topic-1-b.json:/tmp/reassign-topic-1-b.json
+      - ./command-input-files/reassign-topic-2-a.json:/tmp/reassign-topic-2-a.json
+      - ./command-input-files/reassign-topic-2-b.json:/tmp/reassign-topic-2-b.json
+      - ./scripts/update_run.sh:/tmp/update_run.sh
+      - ./clusterID2:/tmp/clusterID
+    command: "bash -c '/tmp/update_run.sh && /etc/confluent/docker/run'"
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka0:9092
+      - KAFKA_CLUSTERS_1_NAME=secondLocal
+      - KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS=kafka1:9092
