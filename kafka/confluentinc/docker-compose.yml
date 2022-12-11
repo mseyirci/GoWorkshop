@@ -24,10 +24,6 @@ services:
       KAFKA_METADATA_LOG_MAX_RECORD_BYTES_BETWEEN_SNAPSHOTS: 2800
       KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
     volumes:
-      - ./command-input-files/reassign-topic-1-a.json:/tmp/reassign-topic-1-a.json
-      - ./command-input-files/reassign-topic-1-b.json:/tmp/reassign-topic-1-b.json
-      - ./command-input-files/reassign-topic-2-a.json:/tmp/reassign-topic-2-a.json
-      - ./command-input-files/reassign-topic-2-b.json:/tmp/reassign-topic-2-b.json
       - ./scripts/update_run.sh:/tmp/update_run.sh
       - ./clusterID2:/tmp/clusterID
     command: "bash -c '/tmp/update_run.sh && /etc/confluent/docker/run'"
@@ -54,10 +50,6 @@ services:
       KAFKA_METADATA_LOG_MAX_RECORD_BYTES_BETWEEN_SNAPSHOTS: 2800
       KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
     volumes:
-      - ./command-input-files/reassign-topic-1-a.json:/tmp/reassign-topic-1-a.json
-      - ./command-input-files/reassign-topic-1-b.json:/tmp/reassign-topic-1-b.json
-      - ./command-input-files/reassign-topic-2-a.json:/tmp/reassign-topic-2-a.json
-      - ./command-input-files/reassign-topic-2-b.json:/tmp/reassign-topic-2-b.json
       - ./scripts/update_run.sh:/tmp/update_run.sh
       - ./clusterID2:/tmp/clusterID
     command: "bash -c '/tmp/update_run.sh && /etc/confluent/docker/run'"
