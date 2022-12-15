@@ -54,13 +54,31 @@ func main() {
 
 	messages := []kafka.Message{
 		{
-			Value: []byte("Hello World!"),
-		},
-		{
 			Value: []byte("One!"),
 		},
 		{
 			Value: []byte("Two!"),
+		},
+		{
+			Value: []byte("Three!"),
+		},
+		{
+			Value: []byte("Four!"),
+		},
+		{
+			Value: []byte("Five!"),
+		},
+		{
+			Value: []byte("Six!"),
+		},
+		{
+			Value: []byte("Seven!"),
+		},
+		{
+			Value: []byte("Eight!"),
+		},
+		{
+			Value: []byte("Nine!"),
 		},
 	}
 

@@ -9,23 +9,28 @@ services:
     ports:
       - "9092:9092"
     environment:
-      KAFKA_LISTENERS: CONTROLLER://:9094,CLIENT://:9093,EXTERNAL://:9092
-      KAFKA_ADVERTISED_LISTENERS: CLIENT://kafka0:9093,EXTERNAL://127.0.0.1:9092
-      KAFKA_INTER_BROKER_LISTENER_NAME: CLIENT
+      KAFKA_LISTENERS: CONTROLLER://:9094,INTERNAL://:9093,EXTERNAL://:9092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka0:9093,EXTERNAL://127.0.0.1:9092
+      #Name of listener used for communication between brokers
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      #PLAINTEXT: Consumer and Producers traffic with kafka is clear text and no username password is forced for Topics
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      #broker roles. It can be both a controller and a broker. Cluster must have at least one broker with controller role
       KAFKA_PROCESS_ROLES: 'controller,broker'
       KAFKA_NODE_ID: 1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      #There can be more than one controller tool with this feature, we will show them If there was another 3 ID broker with the Controller function, we would define it like 3@{ip}:{port}
       KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka0:9094,2@kafka1:9097'
       KAFKA_METADATA_LOG_SEGMENT_MS: 15000
       KAFKA_METADATA_MAX_RETENTION_MS: 1200000
       KAFKA_METADATA_LOG_MAX_RECORD_BYTES_BETWEEN_SNAPSHOTS: 2800
+      #The directory where the data will be stored, partitions are created here.
       KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
     volumes:
       - ./scripts/update_run.sh:/tmp/update_run.sh
-      - ./clusterID2:/tmp/clusterID
+      - ./clusterID1:/tmp/clusterID
     command: "bash -c '/tmp/update_run.sh && /etc/confluent/docker/run'"
 
   kafka1:
@@ -35,11 +40,11 @@ services:
     ports:
       - "9095:9095"
     environment:
-      KAFKA_LISTENERS: CONTROLLER://:9097,CLIENT://:9096,EXTERNAL://:9095
-      KAFKA_ADVERTISED_LISTENERS: CLIENT://kafka1:9096,EXTERNAL://127.0.0.1:9095
-      KAFKA_INTER_BROKER_LISTENER_NAME: CLIENT
+      KAFKA_LISTENERS: CONTROLLER://:9097,INTERNAL://:9096,EXTERNAL://:9095
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka1:9096,EXTERNAL://127.0.0.1:9095
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_PROCESS_ROLES: 'controller,broker'
       KAFKA_NODE_ID: 2
