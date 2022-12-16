@@ -20,6 +20,7 @@ services:
       #broker roles. It can be both a controller and a broker. Cluster must have at least one broker with controller role
       KAFKA_PROCESS_ROLES: 'controller,broker'
       KAFKA_NODE_ID: 1
+      #_consumer_offsets and __transaction_state are how many brokers to keep. If it is 1 and the broker is downed, consumer traffic will stop
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
       #There can be more than one controller tool with this feature, we will show them If there was another 3 ID broker with the Controller function, we would define it like 3@{ip}:{port}
       KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka0:9094,2@kafka1:9097'
